@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 
-import { Header, SearchForm, SearchFormBtn } from './Searchbar.styled';
+import {
+  Header,
+  SearchForm,
+  SearchFormBtn,
+  Input,
+  SearchLabel,
+} from './Searchbar.styled';
 
 class SearchBar extends Component {
   render() {
@@ -8,14 +14,13 @@ class SearchBar extends Component {
       <Header>
         <SearchForm>
           <SearchFormBtn type="submit">
-            <span className="button-label">Search</span>
+            <SearchLabel>Search</SearchLabel>
           </SearchFormBtn>
 
-          <input
-            className="input"
+          <Input
             type="text"
-            autocomplete="off"
-            autofocus
+            autoComplete="off"
+            autoFocus
             placeholder="Search images and photos"
           />
         </SearchForm>

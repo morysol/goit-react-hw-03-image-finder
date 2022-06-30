@@ -1,12 +1,13 @@
 import { MainApp } from './App.styled';
 import SearchBar from './Searchbar/Searchbar';
+import ImageGallery from './ImageGallery/ImageGallery';
 
 export const App = () => {
-  // console.log(SearchBar);
-
+  console.log(ImageGallery);
   return (
     <MainApp>
       <SearchBar></SearchBar>
+      <ImageGallery></ImageGallery>
     </MainApp>
   );
 };
