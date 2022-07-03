@@ -7,8 +7,12 @@ import { MainApp } from './App.styled';
 import SearchBar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 
-import { fetchImages } from '../services/fetchGallery/fetchGallery';
+import { getGallery } from '../services/fetchGallery/fetchGallery';
 import LoadMoreBtn from './LoadMoreBtn/LoadMoreBtn';
+
+//
+import BigPicture from './Overlay/Overlay';
+import PortalReactDOM from 'react-dom';
 
 class App extends Component {
   state = {
@@ -16,34 +20,36 @@ class App extends Component {
     searchPattern: '',
     imageGallery: [],
     totalHits: 0,
+    largeImageURL: '',
+    isLoading: false,
+    isOverlay: false,
   };
 
-  getSearchPattern = newPattern => {
-    this.setState({ searchPattern: newPattern });
-    this.setState({ currentPage: 1 });
-    this.setState({ imageGallery: [] });
-  };
-
-  componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     if (
-      prevState.currentPage === this.state.currentPage &&
-      prevState.searchPattern === this.state.searchPattern
+      prevState.currentPage !== this.state.currentPage ||
+      prevState.searchPattern !== this.state.searchPattern
     ) {
-      return;
+      const { currentPage: page, searchPattern: q } = this.state;
+
+      this.setState({ isLoading: true });
+      const response = await getGallery(page, q);
+
+      this.setState({
+        totalHits: response.totalHits,
+        isLoading: false,
+      });
+      this.setState(prevState => {
+        return { imageGallery: [...prevState.imageGallery, ...response.hits] };
+      });
     }
-    fetchImages.call(this);
   }
 
-  // this.setState({
-  //   imageGallery: hits.map(hit => {
-  //     return {
-  //       id: hit.id,
-  //       webImage: hit.webformatURL,
-  //       largeImage: hit.largeImageURL,
-  //       tags: hit.tags,
-  //     };
-  //   }),
-  // });
+  getSearchPattern = newPattern => {
+    this.setState({ imageGallery: [] });
+    this.setState({ currentPage: 1 });
+    this.setState({ searchPattern: newPattern });
+  };
 
   nextPage = () => {
     this.setState(prevState => {
@@ -53,36 +59,78 @@ class App extends Component {
     });
   };
 
+  onImageClick = id => {
+    const largeImageURL = this.state.imageGallery.find(
+      elem => elem.id === id
+    ).largeImageURL;
+
+    this.setState({ largeImageURL });
+    this.toggleOverlay();
+  };
+
+  toggleOverlay = () => {
+    this.setState(prevState => {
+      return { isOverlay: !prevState.isOverlay };
+    });
+  };
+
+  closeOverlay = e => {
+    if (e.target === e.currentTarget) {
+      this.toggleOverlay();
+    }
+  };
+
   render() {
+    const {
+      imageGallery,
+      totalHits,
+      currentPage,
+      isLoading,
+      isOverlay,
+      largeImageURL,
+    } = this.state;
+
     return (
       <MainApp>
         <SearchBar onSearch={this.getSearchPattern}></SearchBar>
-        <ImageGallery imageGallery={this.state.imageGallery}></ImageGallery>
-        <Circles height="100" width="100" color="grey" ariaLabel="loading" />
-        <LoadMoreBtn type="button" onButton={this.nextPage}></LoadMoreBtn>
+        <ImageGallery
+          imageGallery={this.state.imageGallery}
+          onImageClick={this.onImageClick}
+        ></ImageGallery>
+        {isLoading && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Circles
+              height="100"
+              width="100"
+              color="#f00000"
+              ariaLabel="loading"
+            />
+          </div>
+        )}
+        {imageGallery.length > 0 && currentPage * 12 < totalHits && (
+          <LoadMoreBtn type="button" onButton={this.nextPage} />
+        )}
+        {isOverlay &&
+          PortalReactDOM.createPortal(
+            <React.StrictMode>
+              {
+                <BigPicture
+                  link={largeImageURL}
+                  closeOverlay={this.closeOverlay}
+                />
+              }
+            </React.StrictMode>,
+            document.getElementById('portal-root')
+          )}
       </MainApp>
     );
   }
 }
 
 export default App;
-
-// Создай компоненты
-
-/* <Searchbar>,Sea
-  <ImageGallery>,
-    <ImageGalleryItem>,
-  <Loader> <Button>
-
-  и <Modal>  Портал
-  
-  Готовые стили компонентов можно взять в файле styles.css и подправить под себя, если необходимо. */
-
-// style={{
-//         height: '100vh',
-//         display: 'flex',
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//         fontSize: 40,
-//         color: '#010101',
-//       }}

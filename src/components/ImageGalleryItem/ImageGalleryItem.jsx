@@ -4,10 +4,16 @@ import { Item, Image } from './ImageGalleryItem.styled';
 
 class ImageGalleryItem extends Component {
   render() {
-    return this.props.gallery.map(item => {
+    const { gallery, onImageClick } = this.props;
+    return gallery.map(item => {
       return (
-        <Item key={item.id}>
-          <Image src={item.webImage} alt={item.tags} />
+        <Item
+          key={item.id}
+          onClick={() => {
+            onImageClick(item.id);
+          }}
+        >
+          <Image src={item.webformatURL} alt={item.tags} />
         </Item>
       );
     });

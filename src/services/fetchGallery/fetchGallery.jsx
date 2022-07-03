@@ -15,31 +15,6 @@ export async function getGallery(page = PAGE_NUMBER, q = QUERY_STRING) {
     );
     return response.data;
   } catch (error) {
-    console.error(error);
+    console.error(' --->  fetch error is  ', error);
   }
-}
-
-export function fetchImages() {
-  const { currentPage: page, searchPattern: q } = this.state;
-  getGallery(page, q)
-    .then(data => {
-      this.setState({ totalHits: data.totalHits });
-      return data;
-    })
-    .then(({ hits }) => {
-      const images = hits.map(hit => {
-        return {
-          id: hit.id,
-          webImage: hit.webformatURL,
-          largeImage: hit.largeImageURL,
-          tags: hit.tags,
-        };
-      });
-      return images;
-    })
-    .then(images => {
-      this.setState(prevState => {
-        return { imageGallery: [...prevState.imageGallery, ...images] };
-      });
-    });
 }

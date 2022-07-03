@@ -4,7 +4,12 @@ import { Button } from './LoadMoreBtn.styled';
 
 class LoadMoreBtn extends Component {
   render() {
-    return <Button onClick={this.props.onButton}>Load more...</Button>;
+    const { onButton, type } = this.props;
+    return (
+      <Button onClick={onButton} type={type}>
+        Load more...
+      </Button>
+    );
   }
 }
 
