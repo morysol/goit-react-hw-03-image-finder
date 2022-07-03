@@ -1,13 +1,15 @@
 import { Component } from 'react';
 //
 import { Gallery } from './ImageGallery.styled';
+import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 
 class ImageGallery extends Component {
-  componentDidMount() {
-    // first fetch here
-  }
   render() {
-    return <Gallery></Gallery>;
+    return (
+      <Gallery>
+        <ImageGalleryItem gallery={this.props.imageGallery}></ImageGalleryItem>
+      </Gallery>
+    );
   }
 }
 
