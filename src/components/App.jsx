@@ -5,13 +5,13 @@ import { Circles } from 'react-loader-spinner';
 //
 import { MainApp } from './App.styled';
 import SearchBar from './Searchbar/Searchbar';
-import ImageGallery from './ImageGallery/ImageGallery';
+import { ImageGallery } from './ImageGallery/ImageGallery';
 
 import { getGallery } from '../services/fetchGallery/fetchGallery';
-import LoadMoreBtn from './LoadMoreBtn/LoadMoreBtn';
+import { LoadMoreBtn } from './LoadMoreBtn/LoadMoreBtn';
 
 //
-import BigPicture from './Overlay/Overlay';
+import { BigPicture } from './Overlay/Overlay';
 import PortalReactDOM from 'react-dom';
 
 class App extends Component {
@@ -35,12 +35,25 @@ class App extends Component {
       this.setState({ isLoading: true });
       const response = await getGallery(page, q);
 
+      const imageGallery = response.hits.map(
+        ({ id, webformatURL, largeImageURL, tags }) => ({
+          id,
+          webformatURL,
+          largeImageURL,
+          tags,
+        })
+      );
+      // console.log(imageGallery);
+
       this.setState({
         totalHits: response.totalHits,
         isLoading: false,
       });
       this.setState(prevState => {
-        return { imageGallery: [...prevState.imageGallery, ...response.hits] };
+        // return { imageGallery: [...prevState.imageGallery, ...response.hits] };
+        return {
+          imageGallery: [...prevState.imageGallery, ...imageGallery],
+        };
       });
     }
   }

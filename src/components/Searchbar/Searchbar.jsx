@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types'; // ES6
 
 import {
   Header,
@@ -46,3 +47,7 @@ class SearchBar extends Component {
 }
 
 export default SearchBar;
+
+SearchBar.propTypes = {
+  onSearch: PropTypes.func.isRequired,
+};
