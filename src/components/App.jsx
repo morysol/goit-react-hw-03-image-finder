@@ -12,7 +12,6 @@ import { LoadMoreBtn } from './LoadMoreBtn/LoadMoreBtn';
 
 //
 import { BigPicture } from './Overlay/Overlay';
-import PortalReactDOM from 'react-dom';
 
 class App extends Component {
   state = {
@@ -106,10 +105,12 @@ class App extends Component {
     return (
       <MainApp>
         <SearchBar onSearch={this.getSearchPattern}></SearchBar>
-        <ImageGallery
-          imageGallery={this.state.imageGallery}
-          onImageClick={this.onImageClick}
-        ></ImageGallery>
+        {imageGallery.length > 0 && (
+          <ImageGallery
+            imageGallery={imageGallery}
+            onImageClick={this.onImageClick}
+          />
+        )}
         {isLoading && (
           <div
             style={{
@@ -129,18 +130,22 @@ class App extends Component {
         {imageGallery.length > 0 && currentPage * 12 < totalHits && (
           <LoadMoreBtn type="button" onButton={this.nextPage} />
         )}
-        {isOverlay &&
-          PortalReactDOM.createPortal(
-            <React.StrictMode>
-              {
-                <BigPicture
-                  link={largeImageURL}
-                  closeOverlay={this.closeOverlay}
-                />
-              }
-            </React.StrictMode>,
-            document.getElementById('portal-root')
-          )}
+        {
+          isOverlay && (
+            <BigPicture link={largeImageURL} closeOverlay={this.closeOverlay} />
+          )
+          // PortalReactDOM.createPortal(
+          //   <React.StrictMode>
+          //     {
+          //       <BigPicture
+          //         link={largeImageURL}
+          //         closeOverlay={this.closeOverlay}
+          //       />
+          //     }
+          //   </React.StrictMode>,
+          //   document.getElementById('portal-root')
+          // )
+        }
       </MainApp>
     );
   }
